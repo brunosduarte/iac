@@ -2,7 +2,7 @@ from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Session, create_engine, select
-
+import os 
 class Task(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     msg: str
@@ -11,7 +11,9 @@ class Task(SQLModel, table=True):
 api = FastAPI()
 
 engine = create_engine(
-    "postgresql://postgres:postgres@db:5432/postgres"
+    "postgresql://postgres:postgres@{database_host}:5432/postgres".format(
+        database_host=os.getenv("DATABASE_HOST")
+    )
 )
 
 @api.on_event("startup")
